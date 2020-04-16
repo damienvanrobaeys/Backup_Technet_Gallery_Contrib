@@ -91,13 +91,14 @@ If($parse_profile.StatusDescription -eq "OK")
 			$Get_Contrib_Download_File = $Parse_Contrib_Body.getElementsByClassName("button") | select -expand textContent -ErrorAction silentlycontinue
 			
 			$full_link = "$Basic_Technet_Link/$Get_Contrib_Link"
-
-			$Get_Contrib_Title = $Get_Contrib_Title -Replace'[\/:*?"<>|()]'," " 
-			$Get_Contrib_Title2 = $Get_Contrib_Title.replace("[","").replace("]","").replace(" ","_")
-			write-host ""
-			write-host "Working of the contribution $Get_Contrib_Title2" -foreground "cyan"
 			
-			$Contrib_Folder = "$Backup_output_Folder\$Get_Contrib_Title2" 				
+			$Get_Contrib_Title = ($Get_Contrib_Title -Replace'[\/:*?"<>|()]'," ").replace("]","").replace(" ","_")
+			
+			write-host ""
+			write-host "Working on the contribution $Get_Contrib_Title" -foreground "cyan"
+			
+			$Contrib_Folder = "$Backup_output_Folder\$Get_Contrib_Title" 				
+			
 			New-Item $Contrib_Folder -Type Directory -Force | out-null
 
 			write-host "Folder $Contrib_Folder has been created" 
