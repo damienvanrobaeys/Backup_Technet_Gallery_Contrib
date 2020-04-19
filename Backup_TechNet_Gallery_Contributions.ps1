@@ -83,18 +83,26 @@ If($parse_profile.StatusDescription -eq "OK")
 
 	If($MigrateToGitHub)
 	{
+		If (!(Get-Module -listavailable | where {$_.name -like "*PowerShellForGitHub *"})) 
+			{ 
+				Install-Module PowerShellForGitHub  -ErrorAction SilentlyContinue 
+			} 
+		Else 
+			{ 
+				Import-Module PowerShellForGitHub  -ErrorAction SilentlyContinue 			
+			} 	
 		
-	write-host ""
-	write-host "Connecting on your GitHub account" -foreground "cyan"		
-	$cred = New-Object System.Management.Automation.PSCredential "username is ignored", $GitHub_SecureToken
-	Try
-		{
-			Set-GitHubAuthentication -Credential $cred -SessionOnly | out-null
-			$GitHub_OwnerName = (Get-GitHubUser -Current).login	| out-null
-			write-host "Connexion on your GitHub account is OK" -foreground "cyan"					
-		}
-	Catch
-		{}		
+		write-host ""
+		write-host "Connecting on your GitHub account" -foreground "cyan"		
+		$cred = New-Object System.Management.Automation.PSCredential "username is ignored", $GitHub_SecureToken
+		Try
+			{
+				Set-GitHubAuthentication -Credential $cred -SessionOnly | out-null
+				$GitHub_OwnerName = (Get-GitHubUser -Current).login	| out-null
+				write-host "Connexion on your GitHub account is OK" -foreground "cyan"					
+			}
+		Catch
+			{}		
 	}
 		
 	for ($i = 0; $i -lt $Number_of_contributions;)
@@ -159,7 +167,8 @@ If($parse_profile.StatusDescription -eq "OK")
 
 							$File_To_Upload = "$Contrib_Folder\$Get_Contrib_Download_File"
 							$Get_File_Name = (Get-ChildItem $File_To_Upload).name					
-							$Encoded_File = [System.Convert]::ToBase64String([System.IO.File]::ReadAllBytes("$File_To_Upload"));
+							$Encoded_File = [System.Convert]::ToBase64String([System.IO.File]::ReadAllBytes("$File_To_Upload"));							
+							$Encoded_ReadMe_File = [System.Convert]::ToBase64String([System.IO.File]::ReadAllBytes("$Contrib_File_Mardown"));							
 							
 							write-host "The file $Get_File_Name has been encoded to base 64"
 
@@ -170,9 +179,17 @@ $MyFile_JSON = @"
 }
 "@
 
+$MyReadMe_JSON = @"
+{
+  "message": "",
+  "content": "$Encoded_ReadMe_File"
+}
+"@
+
 						Try
 							{
 								Invoke-GHRestMethod -UriFragment "$Repo_URL/contents/$Get_File_Name" -Method PUT -Body $MyFile_JSON | out-null
+								Invoke-GHRestMethod -UriFragment "$Repo_URL/contents/Readme.md" -Method PUT -Body $MyReadMe_JSON | out-null								
 								write-host "The file $Get_File_Name will be uploaded to $GitHub_OwnerName/$GitHub_RepositoryName"									
 								write-host "The file $Get_File_Name has been successfully uploaded to GitHub"				
 							}
