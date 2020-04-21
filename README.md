@@ -1,4 +1,4 @@
-# Backup your Technet Gallery contributions
+# Backup your Technet Gallery contributions and migrate them to GitHub with PowerShell
 
 This script allows you to backup your or someone else TechNet Gallery contributions
 
