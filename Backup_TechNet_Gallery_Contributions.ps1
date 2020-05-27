@@ -60,7 +60,7 @@ If($parse_profile.StatusDescription -eq "OK")
 		{
 			$Parse_Current_Page = Invoke-WebRequest -Uri $link | select *
 			$Current_Page_Content = $Parse_Current_Page.links | Foreach {$_.href }
-			$Current_Page_Links = $Current_Page_Content | Select-String -Pattern 'about:' | Select-String -Pattern "/site/" -NotMatch  | Select-String -Pattern "about:blank#" -NotMatch | Select-String -Pattern "about:/Account/" -NotMatch	
+			$Current_Page_Links = $Current_Page_Content | Select-String -Pattern 'about:','^/' | Select-String -Pattern "/site/" -NotMatch  | Select-String -Pattern "about:blank#" -NotMatch | Select-String -Pattern "about:/Account/" -NotMatch	| Select-String -Pattern "/Account/" -NotMatch
 			$Contrib_Obj = New-Object PSObject
 			$Contrib_Obj | Add-Member NoteProperty -Name "Link" -Value $Current_Page_Links	
 			$Contrib_Array += $Contrib_Obj	
@@ -74,7 +74,7 @@ If($parse_profile.StatusDescription -eq "OK")
 				$Current_Link = $link +  "&pageIndex=$i"	
 				$Parse_Current_Page = Invoke-WebRequest -Uri $Current_Link | select *
 				$Current_Page_Content = $Parse_Current_Page.links | Foreach {$_.href }
-				$Current_Page_Links = $Current_Page_Content | Select-String -Pattern 'about:' | Select-String -Pattern "/site/" -NotMatch  | Select-String -Pattern "about:blank#" -NotMatch | Select-String -Pattern "about:/Account/" -NotMatch	
+				$Current_Page_Links = $Current_Page_Content | Select-String -Pattern 'about:','^/' | Select-String -Pattern "/site/" -NotMatch  | Select-String -Pattern "about:blank#" -NotMatch | Select-String -Pattern "about:/Account/" -NotMatch	| Select-String -Pattern "/Account/" -NotMatch
 				$Contrib_Obj = New-Object PSObject
 				$Contrib_Obj | Add-Member NoteProperty -Name "Link" -Value $Current_Page_Links	
 				$Contrib_Array += $Contrib_Obj	
@@ -127,7 +127,7 @@ If($parse_profile.StatusDescription -eq "OK")
 					
 					$full_link = "$Basic_Technet_Link/$Get_Contrib_Link"
 					
-					$Get_Contrib_Title = ($Get_Contrib_Title_NoFormat -Replace'[\/:*?"<>|()]'," ").replace("]","").replace(" ","_")
+					$Get_Contrib_Title = ($Get_Contrib_Title_NoFormat -Replace'[\\/:*?"<>|()]'," ").replace("[","").replace("]","").replace(" ","_")
 					
 					write-host ""
 					write-host "Working on the contribution $Get_Contrib_Title" -foreground "cyan"
