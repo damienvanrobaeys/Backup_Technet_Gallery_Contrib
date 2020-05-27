@@ -127,7 +127,7 @@ If($parse_profile.StatusDescription -eq "OK")
 					
 					$full_link = "$Basic_Technet_Link/$Get_Contrib_Link"
 					
-					$Get_Contrib_Title = ($Get_Contrib_Title_NoFormat -Replace'[\/:*?"<>|()]'," ").replace("]","").replace(" ","_")
+					$Get_Contrib_Title = ($Get_Contrib_Title_NoFormat -Replace'[\\/:*?"<>|()]'," ").replace("[","").replace("]","").replace(" ","_")
 					
 					write-host ""
 					write-host "Working on the contribution $Get_Contrib_Title" -foreground "cyan"
